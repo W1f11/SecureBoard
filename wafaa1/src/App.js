@@ -1,10 +1,15 @@
-import LoginRegisterForm from "./components/LoginRegisterForm";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginRegisterForm from "./components/LoginRegisterForm"; 
+import Projects from "./components/Projects";
 
 function App() {
   return (
-    <div className="App">
-      <LoginRegisterForm />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginRegisterForm />} />
+        <Route path="/projects" element={<Projects />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

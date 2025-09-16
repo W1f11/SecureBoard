@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./style.css";
 import "boxicons/css/boxicons.min.css";
+import { useNavigate } from "react-router-dom";
+
 
 const LoginRegisterForm = () => {
   const [isRegister, setIsRegister] = useState(false);
 
   // States login
-  const [loginName, setLoginName] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
   // States register
@@ -16,20 +18,24 @@ const LoginRegisterForm = () => {
   const [regPassword, setRegPassword] = useState("");
 
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   // === Fonction login ===
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("http://127.0.0.1:8000/api/login", {
-        name: loginName,
+        email: loginEmail,
         password: loginPassword,
       });
 
       setMessage("✅ Login successful!");
-      console.log("Login response:", res.data);
+      // Stocker le token dans le localStorage si présent
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+      }
+      navigate("/projects"); // Redirection ici
     } catch (err) {
-      console.error("Login error:", err);
       setMessage(err.response?.data?.message || "❌ Login failed");
     }
   };
@@ -70,12 +76,12 @@ const LoginRegisterForm = () => {
           <div className="input-box animation" style={{ "--i": 1, "--j": 22 }}>
             <input
               type="text"
-              placeholder="Name"
-              value={loginName}
-              onChange={(e) => setLoginName(e.target.value)}
+              placeholder="Email"
+              value={loginEmail}
+              onChange={(e) => setLoginEmail(e.target.value)}
               required
             />
-            <label>Name</label>
+            <label>Email</label>
             <i className="bx bxs-user"></i>
           </div>
           <div className="input-box animation" style={{ "--i": 2, "--j": 23 }}>
@@ -96,6 +102,7 @@ const LoginRegisterForm = () => {
           >
             Login
           </button>
+          <a href="/projects">projects</a>
           <div
             className="logreg-link animation"
             style={{ "--i": 4, "--j": 25 }}
@@ -199,6 +206,7 @@ const LoginRegisterForm = () => {
         </h2>
         <p className="animation" style={{ "--i": 12, "--j": 7 }}>
           Please register to create an account.
+          
         </p>
       </div>
     </div>

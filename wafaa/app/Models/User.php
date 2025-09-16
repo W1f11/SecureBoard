@@ -1,3 +1,4 @@
+<?php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,5 +47,9 @@ class User extends Authenticatable implements LaratrustUser
     public function assignDefaultRole()
     {
         $this->addRole('user'); // par exemple
+    }
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
     }
 }
