@@ -5,17 +5,18 @@ import { useNavigate } from "react-router-dom";
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
-  // Récupérer le token du localStorage
+  const [newTitle, setNewTitle] = useState("");
+  const [newDesc, setNewDesc] = useState("");
+  const [editId, setEditId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+
+  const navigate = useNavigate();
+  
   const token = localStorage.getItem("token");
 
-  // Redirection vers login si pas de token
-  useEffect(() => {
-    if (!token) {
-      navigate("/projects"); // ← corrige ici : pas /projects
-    }
-  }, [token, navigate]);
+  
 
   // Charger les projets depuis Laravel
   useEffect(() => {
@@ -25,16 +26,88 @@ const Projects = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
-          console.log("Projets reçus:", res.data); // 🔹 debug
           setProjects(res.data);
-          setLoading(false);
         })
         .catch((err) => {
           console.error("Erreur chargement projets:", err);
+        })
+        .finally(() => {
           setLoading(false);
         });
     }
   }, [token]);
+
+  // CREATE
+  const handleCreate = async (e) => {
+  e.preventDefault();
+
+  if (!newTitle.trim() || !newDesc.trim()) {
+    alert("Veuillez remplir le titre et la description.");
+    return;
+  }
+
+  try {
+    const res = await axios.post(
+      "http://localhost:8000/api/projects",
+      { title: newTitle.trim(), description: newDesc.trim() },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", // Assure que Laravel reçoit du JSON
+        },
+      }
+    );
+
+    // Ajout du nouveau projet à la liste
+    setProjects((prev) => [...prev, res.data]);
+
+    // Réinitialisation des champs
+    setNewTitle("");
+    setNewDesc("");
+
+    console.log("Projet créé :", res.data);
+  } catch (err) {
+    console.error("Erreur création projet :", err.response?.data || err.message);
+
+    // Affiche le message exact de Laravel si possible
+    if (err.response?.data?.message) {
+      alert("Erreur création projet : " + err.response.data.message);
+    } else {
+      alert("Erreur création projet. Vérifiez votre token et les champs.");
+    }
+  }
+};
+
+  // UPDATE
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(
+        `http://localhost:8000/api/projects/${editId}`,
+        { title: editTitle, description: editDesc },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setProjects(projects.map((p) => (p.id === editId ? res.data : p)));
+      setEditId(null);
+      setEditTitle("");
+      setEditDesc("");
+    } catch (err) {
+      alert("Erreur modification projet");
+    }
+  };
+
+  // DELETE
+  const handleDelete = async (id) => {
+    if (!window.confirm("Supprimer ce projet ?")) return;
+    try {
+      await axios.delete(`http://localhost:8000/api/projects/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProjects(projects.filter((p) => p.id !== id));
+    } catch (err) {
+      alert("Erreur suppression projet");
+    }
+  };
 
   // Déconnexion
   const handleLogout = () => {
@@ -42,40 +115,83 @@ const Projects = () => {
     navigate("/");
   };
 
-  if (loading) {
-  // Projets fictifs en attendant le backend
-  const fakeProjects = [
-    { id: 1, title: "🌌 Exploration Spatiale", description: "Un projet sur les étoiles et galaxies.", user: { name: "Admin" } },
-    { id: 2, title: "🍕 Application de Restaurant", description: "Commander vos plats préférés en ligne.", user: { name: "Demo User" } },
-    { id: 3, title: "📚 Gestion Bibliothèque", description: "Système de gestion des emprunts de livres.", user: { name: "Test User" } },
-  ];
-
   return (
     <div style={{ padding: "20px" }}>
-      <h1>📂 Projets (Mode Démo)</h1>
-      <p>Chargement des vrais projets...</p>
-      <div>
-        {fakeProjects.map((project) => (
-          <div
-            key={project.id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "10px",
-              marginBottom: "10px",
-              borderRadius: "5px",
-              background: "#f9f9f9"
-            }}
-          >
-            <h3>{project.title}</h3>
-            <p>{project.description}</p>
-            <small>👤 {project.user.name}</small>
-          </div>
-        ))}
+      <h1>📂 Projets</h1>
+      <button onClick={handleLogout}>🚪 Déconnexion</button>
+
+      {/* Formulaire création projet (toujours affiché) */}
+      <form onSubmit={handleCreate} style={{ marginTop: "20px" }}>
+        <h3>➕ Nouveau projet</h3>
+        <input
+          type="text"
+          placeholder="Titre"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          required
+        />
+        <br />
+        <textarea
+          placeholder="Description"
+          value={newDesc}
+          onChange={(e) => setNewDesc(e.target.value)}
+          required
+        ></textarea>
+        <br />
+        <button type="submit">✅ Créer</button>
+      </form>
+
+      {/* Liste des projets */}
+      <div style={{ marginTop: "20px" }}>
+        {loading ? (
+          <p>Chargement des projets...</p>
+        ) : projects.length === 0 ? (
+          <p>Aucun projet pour l’instant.</p>
+        ) : (
+          projects.map((project) => (
+            <div key={project.id} style={{ marginBottom: "10px" }}>
+              <h3>{project.title}</h3>
+              <p>{project.description}</p>
+              <button onClick={() => handleDelete(project.id)}>❌ Supprimer</button>
+              <button
+                onClick={() => {
+                  setEditId(project.id);
+                  setEditTitle(project.title);
+                  setEditDesc(project.description);
+                }}
+              >
+                ✏️ Modifier
+              </button>
+
+              {editId === project.id && (
+                <form onSubmit={handleEdit}>
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    required
+                  />
+                  <textarea
+                    value={editDesc}
+                    onChange={(e) => setEditDesc(e.target.value)}
+                    required
+                  ></textarea>
+                  <button type="submit">💾 Sauvegarder</button>
+                  <button
+                    type="button"
+                    onClick={() => setEditId(null)}
+                    style={{ marginLeft: "5px" }}
+                  >
+                    ❌ Annuler
+                  </button>
+                </form>
+              )}
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
-}
-
 };
 
 export default Projects;

@@ -29,16 +29,21 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $user = User::where('email', $request->email)->first();
+{
+    $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
-
-        return response()->json([
-            'message' => 'Login successful',
-            'user' => $user,
-        ]);
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
+
+    // Générer un token Sanctum
+    $token = $user->createToken('secureboard')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Login successful',
+        'user' => $user,
+        'token' => $token, // <- token envoyé au frontend
+    ]);
+}
+
 }

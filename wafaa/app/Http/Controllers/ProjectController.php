@@ -22,10 +22,15 @@ class ProjectController extends Controller
             'description' => 'nullable|string',
         ]);
 
+        $user = \Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $project = Project::create([
             'title' => $request->title,
             'description' => $request->description,
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
         ]);
 
         return response()->json($project, 201);
