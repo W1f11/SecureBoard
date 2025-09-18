@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -115,11 +118,12 @@ const Projects = () => {
     navigate("/");
   };
 
+
   return (
     <div style={{ padding: "20px" }}>
       <h1>📂 Projets</h1>
       <button onClick={handleLogout}>🚪 Déconnexion</button>
-
+      <Link to="/admin/users">Admin Users</Link>
       {/* Formulaire création projet (toujours affiché) */}
       <form onSubmit={handleCreate} style={{ marginTop: "20px" }}>
         <h3>➕ Nouveau projet</h3>
@@ -185,6 +189,7 @@ const Projects = () => {
                     ❌ Annuler
                   </button>
                 </form>
+                
               )}
             </div>
           ))

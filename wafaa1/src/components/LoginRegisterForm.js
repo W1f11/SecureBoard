@@ -63,11 +63,11 @@ const LoginRegisterForm = () => {
   };
 
   return (
-    <div className={`wrapper ${isRegister ? "active" : ""}`}>
+  <div className={`wrapper ${isRegister ? "active" : ""}`}>
       <span className="bg-animate"></span>
       <span className="bg-animate2"></span>
 
-      {/* === Login Form === */}
+  {/* === Login Form === */}
       <div className="form-box login">
         <h2 className="animation" style={{ "--i": 0, "--j": 21 }}>
           Login
@@ -102,7 +102,8 @@ const LoginRegisterForm = () => {
           >
             Login
           </button>
-          <a href="/projects">projects</a>
+          <a href="/projects">Projects</a>
+          <a href="/admin/users" style={{ marginLeft: 10 }}>Admin Users</a>
           <div
             className="logreg-link animation"
             style={{ "--i": 4, "--j": 25 }}

@@ -25,8 +25,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('projects', ProjectController::class);
+
+// Routes CRUD utilisateurs réservées à l'admin
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::apiResource('users', App\Http\Controllers\UserController::class);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -54,4 +56,7 @@ Route::middleware('auth:sanctum')->get('/projects', function (Request $request) 
 
     // Combiner
     return $userProjects->merge($randomProjects);
+});
+Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
+    return $request->user()->load('roles');
 });
