@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import "../App.css";
 import { Link } from "react-router-dom";
 
-
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -137,40 +136,6 @@ const Projects = () => {
 
   return (
     <div className="projects-layout">
-      <Link
-        to="/admin/users"
-        style={{
-          display: 'inline-block',
-          background: '#0ef',
-          color: '#081b29',
-          fontWeight: 'bold',
-          fontSize: '1rem',
-          padding: '8px 20px',
-          borderRadius: '6px',
-          margin: '16px 0',
-          textAlign: 'center',
-          minWidth: '120px',
-          maxWidth: '200px',
-          boxShadow: '0 2px 8px #0ef',
-          cursor: 'pointer',
-          textDecoration: 'none',
-          border: 'none',
-          zIndex: 5,
-          position: 'relative',
-          transition: 'background 0.2s, color 0.2s',
-        }}
-        onMouseOver={e => {
-          e.target.style.background = '#081b29';
-          e.target.style.color = '#0ef';
-        }}
-        onMouseOut={e => {
-          e.target.style.background = '#0ef';
-          e.target.style.color = '#081b29';
-        }}
-      >
-        Admin Users
-      </Link>
-
       {/* Burger Button for sidebar toggle on medium screens */}
       <button
         className="burger-btn"
@@ -280,7 +245,40 @@ const Projects = () => {
             <span className="username" style={{ color: "#0ef" }}>
               {user?.name || "Utilisateur"}
             </span>
+            
           </div>
+          {/* Admin Users link styled as signout-btn */}
+            <Link
+              to="/admin/users"
+              className="signout-btn"
+              style={{
+                marginTop: "12px",
+                marginBottom: "8px",
+                textAlign: "center",
+                fontWeight: "600",
+                fontSize: "clamp(0.8rem, 2vw, 1.2rem)",
+                borderRadius: "24px",
+                padding: "10px 2vw",
+                border: "2px solid #0ef",
+                color: "#0ef",
+                background: "transparent",
+                transition: "background 0.2s, color 0.2s, font-size 0.2s",
+                position: "relative",
+                overflow: "hidden",
+                display: "inline-block",
+                textDecoration: "none",
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = "#0ef";
+                e.target.style.color = "#081b29";
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = "transparent";
+                e.target.style.color = "#0ef";
+              }}
+            >
+              Admin Users
+            </Link>
           <button className="signout-btn" onClick={handleLogout}>
             Sign Out
           </button>
@@ -338,7 +336,6 @@ const Projects = () => {
           ></textarea>
           <button type="submit">Create</button>
         </form>
-
         {/* Projects Grid */}
         <div
           className="projects-grid"
