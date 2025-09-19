@@ -13,8 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+use App\Jobs\TestJob;
+
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
+});
+
+Route::get('/test-job', function () {
+    TestJob::dispatch();
+    return 'TestJob dispatché !';
 });
 
 require __DIR__.'/auth.php';
