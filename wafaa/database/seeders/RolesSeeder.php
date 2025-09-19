@@ -10,19 +10,19 @@ class RolesSeeder extends Seeder
 {
     public function run()
     {
-        $admin = Role::firstOrCreate(
+        Role::firstOrCreate(
             ['name' => 'admin'],
-            ['display_name' => 'Administrator']
+            ['display_name' => 'Administrator', 'description' => 'Admin role']
         );
 
-        $manager = Role::firstOrCreate(
+        Role::firstOrCreate(
             ['name' => 'manager'],
-            ['display_name' => 'Manager']
+            ['display_name' => 'Manager', 'description' => 'Manager role']
         );
 
-        $user = Role::firstOrCreate(
+        Role::firstOrCreate(
             ['name' => 'user'],
-            ['display_name' => 'User']
+            ['display_name' => 'User', 'description' => 'User role']
         );
 
         // Récupération des permissions existantes

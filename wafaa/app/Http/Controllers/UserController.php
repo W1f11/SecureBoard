@@ -21,7 +21,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
-            'role' => 'required|string',
+            'role' => 'required|string|in:user,manager,admin',
         ]);
         $user = User::create([
             'name' => $request->name,
@@ -29,8 +29,11 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
         // Attribution du rôle (Laratrust)
-        $user->addRole($request->role); // ou $user->assignRole($request->role) pour Spatie
-        return response()->json($user->load('roles'), 201);
+        $user->addRole($request->role); 
+        return response()->json([
+        'message' => 'Utilisateur créé avec succès',
+        'user' => $user->load('roles') // retourne avec ses rôles
+    ], 201);
     }
 
     // Mettre à jour un utilisateur
