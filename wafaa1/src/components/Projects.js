@@ -70,9 +70,14 @@ const Projects = () => {
       return;
     }
     try {
+      // Ajout de user_ids (assignation à l'utilisateur courant)
       const res = await axios.post(
         "http://localhost:8000/api/projects",
-        { title: newTitle.trim(), description: newDesc.trim() },
+        {
+          title: newTitle.trim(),
+          description: newDesc.trim(),
+          user_ids: user ? [user.id] : []
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -85,15 +90,15 @@ const Projects = () => {
       setNewDesc("");
       console.log("Projet créé :", res.data);
     } catch (err) {
-      console.error(
-        "Erreur création projet :",
-        err.response?.data || err.message
-      );
-      if (err.response?.data?.message) {
-        alert("Erreur création projet : " + err.response.data.message);
-      } else {
-        alert("Erreur création projet. Vérifiez votre token et les champs.");
+      // Affichage détaillé de l'erreur backend
+      let backendMsg = err.response?.data?.message || err.response?.data?.error || err.message;
+      let backendErrors = err.response?.data?.errors;
+      let details = backendMsg;
+      if (backendErrors && typeof backendErrors === 'object') {
+        details += '\n' + Object.entries(backendErrors).map(([k,v]) => `${k}: ${v}`).join('\n');
       }
+      alert("Erreur création projet :\n" + details);
+      console.error("Erreur création projet :", err.response?.data || err.message);
     }
   };
 

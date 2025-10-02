@@ -29,11 +29,15 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
         // Attribution du rôle (Laratrust)
-        $user->addRole($request->role); 
+        $user->addRole($request->role);
+
+        // Dispatch event UserRegistered pour notifications/broadcast
+        event(new \App\Events\UserRegistered($user));
+
         return response()->json([
-        'message' => 'Utilisateur créé avec succès',
-        'user' => $user->load('roles') // retourne avec ses rôles
-    ], 201);
+            'message' => 'Utilisateur créé avec succès',
+            'user' => $user->load('roles') // retourne avec ses rôles
+        ], 201);
     }
 
     // Mettre à jour un utilisateur

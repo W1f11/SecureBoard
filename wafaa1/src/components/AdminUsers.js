@@ -76,7 +76,12 @@ const AdminUsers = () => {
       setRole("user");
       fetchUsers();
     } catch (err) {
-      alert("Erreur création utilisateur");
+      let msg = "Erreur création utilisateur";
+      if (err.response && err.response.data) {
+        if (err.response.data.message) msg += " : " + err.response.data.message;
+        if (err.response.data.errors) msg += "\n" + JSON.stringify(err.response.data.errors);
+      }
+      alert(msg);
     }
   };
 

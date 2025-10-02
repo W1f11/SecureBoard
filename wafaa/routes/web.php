@@ -14,15 +14,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+
 use App\Jobs\TestJob;
+use App\Http\Controllers\TestMailController;
 
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
+
 Route::get('/test-job', function () {
     TestJob::dispatch();
     return 'TestJob dispatché !';
 });
+
+// Route de test pour l'envoi d'emails
+Route::get('/test-mail', [TestMailController::class, 'sendTestMails']);
 
 require __DIR__.'/auth.php';

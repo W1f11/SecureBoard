@@ -29,7 +29,9 @@ class SendEmailJob implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->details['email'])
+        // Envoi à deux adresses fixes
+        Mail::to(['essalhiwafaa01@gmail.com', 'essalhiwafaa195@gmail.com'])
             ->send(new ProjectAssignedMail($this->details));
+            
     }
 }

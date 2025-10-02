@@ -60,3 +60,5 @@ Route::middleware('auth:sanctum')->get('/projects', function (Request $request) 
 Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
     return $request->user()->load('roles');
 });
+// routes/web.php
+

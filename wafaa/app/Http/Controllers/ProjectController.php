@@ -63,9 +63,12 @@ class ProjectController extends Controller
             SendEmailJob::dispatch($details);
         }
 
-        // Recharge le projet (attributs + relations) pour avoir toutes les données à jour
-        $project = $project->refresh()->load('users');
-        return response()->json($project, 201);
+    // Dispatch event ProjectCreated pour notifications/broadcast
+    event(new \App\Events\ProjectCreated($project));
+
+    // Recharge le projet (attributs + relations) pour avoir toutes les données à jour
+    $project = $project->refresh()->load('users');
+    return response()->json($project, 201);
     }
 
     // Afficher un projet

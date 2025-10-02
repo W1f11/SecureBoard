@@ -102,8 +102,7 @@ const LoginRegisterForm = () => {
           >
             Login
           </button>
-          <a href="/projects">Projects</a>
-          <a href="/admin/users" style={{ marginLeft: 10 }}>Admin Users</a>
+          
           <div
             className="logreg-link animation"
             style={{ "--i": 4, "--j": 25 }}

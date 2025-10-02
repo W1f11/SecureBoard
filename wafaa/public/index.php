@@ -19,7 +19,11 @@ define('LARAVEL_START', microtime(true));
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
 }
-
+if (file_exists('C:\xampp\php\extras\ssl\cacert.pem')) {
+    putenv('SSL_CERT_FILE=C:\xampp\php\extras\ssl\cacert.pem');
+    ini_set('openssl.cafile', 'C:\xampp\php\extras\ssl\cacert.pem');
+    ini_set('curl.cainfo', 'C:\xampp\php\extras\ssl\cacert.pem');
+}
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader
